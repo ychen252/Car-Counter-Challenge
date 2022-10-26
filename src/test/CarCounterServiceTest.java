@@ -46,7 +46,6 @@ public class CarCounterServiceTest {
         File expectFile = new File(TEST_CASE_1_EXPECT_3);
         Assertions.assertEquals(FileUtils.readFileToString(expectFile, "utf-8"),
                 FileUtils.readFileToString(outputFile, "utf-8"));
-
     }
 
     @Test
