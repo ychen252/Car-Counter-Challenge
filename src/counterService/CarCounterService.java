@@ -83,20 +83,20 @@ public class CarCounterService implements ICounterService {
             return writeMapToFile(data, outputFilePath);
         }
 
-        List<Map.Entry<String,Integer>> entries = new ArrayList<>(data.entrySet());
+        List<Map.Entry<String, Integer>> entries = new ArrayList<>(data.entrySet());
         int minSum = 0;
         //non-inclusive right index and inclusive left index,i.e. [left,right)
         int minSumWindowRightIndex = k;
 
         //first window sum
-        for(int i=0;i < k; i++){
+        for (int i = 0; i < k; i++) {
             minSum += entries.get(i).getValue();
         }
 
         int windowSum = minSum;
-        for(int i=k; i< data.size(); i++){
-            windowSum = windowSum + entries.get(i).getValue() - entries.get(i-k).getValue();
-            if(windowSum < minSum){
+        for (int i = k; i < data.size(); i++) {
+            windowSum = windowSum + entries.get(i).getValue() - entries.get(i - k).getValue();
+            if (windowSum < minSum) {
                 minSumWindowRightIndex = i + 1;
                 minSum = windowSum;
             }
@@ -104,7 +104,7 @@ public class CarCounterService implements ICounterService {
 
         int minSumWindowLeftIndex = minSumWindowRightIndex - k;
 
-        for(int i = minSumWindowLeftIndex; i< minSumWindowRightIndex; i++){
+        for (int i = minSumWindowLeftIndex; i < minSumWindowRightIndex; i++) {
 
             result.put(entries.get(i).getKey(), entries.get(i).getValue());
         }

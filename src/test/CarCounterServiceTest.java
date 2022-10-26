@@ -4,6 +4,7 @@ import counterService.CarCounterService;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
 import java.io.File;
 import java.io.IOException;
 
@@ -22,35 +23,35 @@ public class CarCounterServiceTest {
 
     @Test
     //Test 1 - Aggregate car counts by each day
-    public void aggregateByDay() throws Exception {
+    public void aggregateByDay () throws Exception {
         File outputFile = carCounter1.aggregateByDay(TEST_CASE_1_OUTPUT_1);
         File expectFile = new File(TEST_CASE_1_EXPECT_1);
-        Assertions.assertEquals(FileUtils.readFileToString(expectFile,"utf-8"),
-                FileUtils.readFileToString(outputFile,"utf-8"));
+        Assertions.assertEquals(FileUtils.readFileToString(expectFile, "utf-8"),
+                FileUtils.readFileToString(outputFile, "utf-8"));
     }
 
     @Test
     //Test 2 - top 3 time intervals with most cars
-    public void getKTimeIntervalsWithMostCount() throws Exception{
-        File outputFile = carCounter1.getKTimeIntervalsWithMostCount(3,TEST_CASE_1_OUTPUT_2);
+    public void getKTimeIntervalsWithMostCount () throws Exception {
+        File outputFile = carCounter1.getKTimeIntervalsWithMostCount(3, TEST_CASE_1_OUTPUT_2);
         File expectFile = new File(TEST_CASE_1_EXPECT_2);
-        Assertions.assertEquals(FileUtils.readFileToString(expectFile,"utf-8"),
-                FileUtils.readFileToString(outputFile,"utf-8"));
+        Assertions.assertEquals(FileUtils.readFileToString(expectFile, "utf-8"),
+                FileUtils.readFileToString(outputFile, "utf-8"));
     }
 
     @Test
-    //Test 3 - 4 consecutive time intervals (1.5h) with least cars
-    public void getKConsecutiveTimeIntervalsWithLeastCountSum() throws Exception{
-        File outputFile = carCounter1.getKConsecutiveTimeIntervalsWithLeastCountSum(4,TEST_CASE_1_OUTPUT_3);
+    //Test 3 - 3 consecutive time intervals (1.5h) with least cars
+    public void getKConsecutiveTimeIntervalsWithLeastCountSum () throws Exception {
+        File outputFile = carCounter1.getKConsecutiveTimeIntervalsWithLeastCountSum(3, TEST_CASE_1_OUTPUT_3);
         File expectFile = new File(TEST_CASE_1_EXPECT_3);
-        Assertions.assertEquals(FileUtils.readFileToString(expectFile,"utf-8"),
-                FileUtils.readFileToString(outputFile,"utf-8"));
+        Assertions.assertEquals(FileUtils.readFileToString(expectFile, "utf-8"),
+                FileUtils.readFileToString(outputFile, "utf-8"));
 
     }
 
     @Test
     //Test 4 - total Count
-    public void getTotalCount() throws Exception{
+    public void getTotalCount () throws Exception {
         Assertions.assertEquals(398, carCounter1.getTotalCount());
     }
 }
