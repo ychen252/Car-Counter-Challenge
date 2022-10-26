@@ -10,6 +10,7 @@ import java.io.IOException;
 public class CarCounterServiceTest {
     static final String TEST_CASE_1_INPUT = "src/test/case1/input.txt";
     static final String TEST_CASE_1_OUTPUT_1 = "src/test/case1/output1.txt";
+    static final String TEST_CASE_1_EXPECT_1 = "src/test/case1/expect1.txt";
     static final String TEST_CASE_1_OUTPUT_2 = "src/test/case1/output2.txt";
     static final String TEST_CASE_1_OUTPUT_3 = "src/test/case1/output3.txt";
 
@@ -18,11 +19,11 @@ public class CarCounterServiceTest {
 
     @Test
     //Test 1 - Aggregate car counts by each day
-    public void aggregateByDay() throws IOException {
+    public void aggregateByDay() throws Exception {
         File outputFile = carCounter1.aggregateByDay(TEST_CASE_1_OUTPUT_1);
-        File expectedFile = new File(TEST_CASE_1_INPUT);
-        Assertions.assertEquals(FileUtils.readFileToString(outputFile,"utf-8"),
-                FileUtils.readFileToString(expectedFile,"utf-8"));
+        File expectedFile = new File(TEST_CASE_1_EXPECT_1);
+        Assertions.assertEquals(FileUtils.readFileToString(expectedFile,"utf-8"),
+                FileUtils.readFileToString(outputFile,"utf-8"));
     }
 
     @Test

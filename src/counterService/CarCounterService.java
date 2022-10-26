@@ -1,15 +1,14 @@
 package counterService;
 
 import java.io.*;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class CarCounterService implements ICounterService {
     public static final String WHITE_SPACE_DELIMITER = "\\s+";
-    private LinkedHashMap<String, Integer> data = new LinkedHashMap<>();
+    private TreeMap<String, Integer> data = new TreeMap<>();
     private int totalCount = 0;
 
     public CarCounterService ( InputStream inputStream ) {
@@ -38,7 +37,28 @@ public class CarCounterService implements ICounterService {
     }
 
     @Override
-    public File aggregateByDay ( String outputFilePath ) {
+    public File aggregateByDay ( String outputFilePath ) throws Exception {
+
+/*        String currentDay = "";
+        Integer currentSum = 0;
+
+        for (Map.Entry<String, Integer> entry : hashMap.entrySet()) {
+            String string = entry.getKey() + " " + entry.getValue().toString();
+            if(!isFirstLine){
+                bufferedWriter.newLine();
+            }
+            bufferedWriter.append(string);
+            isFirstLine = false;
+        }
+        bufferedWriter.close();*/
+
+        TreeMap<String, Integer> result = new TreeMap<>();
+        data.entrySet().stream().collect(Collectors.groupingBy(e -> e.getKey().substring(0, 10),
+                Collectors.summingInt(e -> e.getValue())))
+                .forEach(( date, count ) -> result.put(date.substring(0, 10), count));
+
+        return writeMapToFile(result, outputFilePath);
+
     }
 
     @Override
@@ -52,7 +72,7 @@ public class CarCounterService implements ICounterService {
     }
 
     //Private Helper
-    public File writeHashMapToFile ( LinkedHashMap<String, Integer> hashMap, String outputFilePath ) throws Exception {
+    public File writeMapToFile ( Map<String, Integer> hashMap, String outputFilePath ) throws Exception {
         File file = new File(outputFilePath);
 
         if (!file.exists()) {
@@ -63,7 +83,7 @@ public class CarCounterService implements ICounterService {
         boolean isFirstLine = true;
         for (Map.Entry<String, Integer> entry : hashMap.entrySet()) {
             String string = entry.getKey() + " " + entry.getValue().toString();
-            if(!isFirstLine){
+            if (!isFirstLine) {
                 bufferedWriter.newLine();
             }
             bufferedWriter.append(string);
