@@ -25,7 +25,6 @@ public class CarCounterService implements ICounterService {
             }
             inputStream.close();
             bufferedReader.close();
-
         } catch (Exception e) {
             //Add to exception log to capture this exception
         }
@@ -38,37 +37,81 @@ public class CarCounterService implements ICounterService {
 
     @Override
     public File aggregateByDay ( String outputFilePath ) throws Exception {
-
-/*        String currentDay = "";
-        Integer currentSum = 0;
-
-        for (Map.Entry<String, Integer> entry : hashMap.entrySet()) {
-            String string = entry.getKey() + " " + entry.getValue().toString();
-            if(!isFirstLine){
-                bufferedWriter.newLine();
-            }
-            bufferedWriter.append(string);
-            isFirstLine = false;
-        }
-        bufferedWriter.close();*/
-
         TreeMap<String, Integer> result = new TreeMap<>();
         data.entrySet().stream().collect(Collectors.groupingBy(e -> e.getKey().substring(0, 10),
                 Collectors.summingInt(e -> e.getValue())))
                 .forEach(( date, count ) -> result.put(date.substring(0, 10), count));
 
         return writeMapToFile(result, outputFilePath);
+    }
+
+    @Override
+    //create a priority queue and get top k most, time complexity O(N log k)
+    public File getKTimeIntervalsWithMostCount ( int k, String outputFilePath ) throws Exception {
+        PriorityQueue<String> priorityQueue = new PriorityQueue<>(new Comparator<String>() {
+            @Override
+            public int compare ( String a, String b ) {
+                return data.get(a) - data.get(b);
+            }
+        });
+        for (String key : data.keySet()) {
+            //if priority queue size less than k, always add to the priority queue
+            if (priorityQueue.size() < k) {
+                priorityQueue.add(key);
+            }
+            //if current line great than biggest count in the priority queue, then remove the smallest and add this key
+            else if (data.get(key) > data.get(priorityQueue.peek())) {
+                priorityQueue.remove();
+                priorityQueue.add(key);
+            }
+        }
+
+        TreeMap<String, Integer> result = new TreeMap<>();
+        while (!priorityQueue.isEmpty()) {
+            String key = priorityQueue.poll();
+            result.put(key, data.get(key));
+        }
+        return writeMapToFile(result, outputFilePath);
 
     }
 
     @Override
-    public File getKTimeIntervalsWithMostCount ( int k, String outputFilePath ) {
-        return null;
-    }
+    //maintain a sliding window and get the k consecutive time intervals with smallest window sum, time complexity O(N)
+    public File getKConsecutiveTimeIntervalsWithLeastCountSum ( int k, String outputFilePath ) throws Exception {
+        TreeMap<String, Integer> result = new TreeMap<>();
+        if (data.size() < k) {
+            return writeMapToFile(data, outputFilePath);
+        }
 
-    @Override
-    public File getKConsecutiveTimeIntervalsWithLeastCountSum ( int k, String outputFilePath ) {
-        return null;
+        List<Map.Entry<String,Integer>> entries = new ArrayList<>(data.entrySet());
+        int minSum = 0;
+        //non-inclusive right index and inclusive left index,i.e. [left,right)
+        int minSumWindowRightIndex = k;
+
+        //first window sum
+        for(int i=0;i < k; i++){
+            minSum += entries.get(i).getValue();
+        }
+
+        int windowSum = minSum;
+        for(int i=k; i< data.size(); i++){
+            windowSum = windowSum + entries.get(i).getValue() - entries.get(i-k).getValue();
+            if(windowSum < minSum){
+                minSumWindowRightIndex = i + 1;
+                minSum = windowSum;
+            }
+        }
+
+        int minSumWindowLeftIndex = minSumWindowRightIndex - k;
+
+        for(int i = minSumWindowLeftIndex; i< minSumWindowRightIndex; i++){
+
+            result.put(entries.get(i).getKey(), entries.get(i).getValue());
+        }
+
+        System.out.println(result);
+
+        return writeMapToFile(result, outputFilePath);
     }
 
     //Private Helper
