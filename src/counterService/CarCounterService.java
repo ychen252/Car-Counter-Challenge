@@ -59,7 +59,7 @@ public class CarCounterService implements ICounterService {
             if (priorityQueue.size() < k) {
                 priorityQueue.add(key);
             }
-            //if current line great than biggest count in the priority queue, then remove the smallest and add this key
+            //if current count great than smallest count in the priority queue, then remove the smallest and add this key
             else if (data.get(key) > data.get(priorityQueue.peek())) {
                 priorityQueue.remove();
                 priorityQueue.add(key);
@@ -108,14 +108,12 @@ public class CarCounterService implements ICounterService {
 
             result.put(entries.get(i).getKey(), entries.get(i).getValue());
         }
-
-        System.out.println(result);
-
+        
         return writeMapToFile(result, outputFilePath);
     }
 
     //Private Helper
-    public File writeMapToFile ( Map<String, Integer> hashMap, String outputFilePath ) throws Exception {
+    private File writeMapToFile ( Map<String, Integer> hashMap, String outputFilePath ) throws Exception {
         File file = new File(outputFilePath);
 
         if (!file.exists()) {
